@@ -13,13 +13,13 @@ VALUES ("Fixture Design");
 
 -- inserting 3 rows into role table --
 INSERT INTO role_table (title, salary, dep_ID)
-VALUES ("Store Planner", "65000", 1);
+VALUES ("Store Planner", 65000, 1);
 
 INSERT INTO role_table (title, salary, dep_ID)
-VALUES ("Merchandiser", "45000", 2);
+VALUES ("Merchandiser", 45000, 2);
 
 INSERT INTO role_table (title, salary, dep_ID)
-VALUES ("Fixture Designer", "55000", 3);
+VALUES ("Fixture Designer", 55000, 3);
 
 -- inserting 3 rows into employee table --
 INSERT INTO employee_table (first_name, last_name, role_ID, mng_ID)

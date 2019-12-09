@@ -152,6 +152,66 @@ function add() {
         }
     });
 };
+
+// ADD FUNCTIONS
+function addDepartment() {
+    return inquirer.prompt([
+        {
+            type: "input",
+            name: "name",
+            message: "What is the name of the department?",
+        },
+    ]).then(function (answer) {
+        connection.query("INSERT INTO department_table (department_name) VALUES ('" + answer.name + "');", function (err, result) {
+            if (err) throw err;
+            viewDepartment();
+            startAPP()
+        });
+    });
+};
+
+function addRoles() {
+    return inquirer.prompt([
+        {
+            type: "input",
+            name: "name",
+            message: "What is the title of this role?",
+        },
+        {
+            type: "number",
+            name: "salary",
+            message: "What is the salary of this role (only enter a number, no comas)?",
+        },
+        {
+            type: "number",
+            name: "id",
+            message: "What is the Department ID number (refer to department view)?",
+        },
+    ]).then(function (answers) {
+        connection.query('"INSERT INTO role_table (title, salary, dep_ID) VALUES ("' + answers.name + '","' + answers.salary + '",' + answers.id + ');' , function (err, result) {
+            if (err) throw err;
+            viewDepartment();
+            startAPP()
+        });
+    });
+};
+
+function addEmployees() {
+    return inquirer.prompt([
+        {
+            type: "input",
+            name: "name",
+            message: "What is the name of the department?",
+        },
+    ]).then(function (answer) {
+        connection.query("INSERT INTO department_table (department_name) VALUES ('" + answer.name + "');", function (err, result) {
+            if (err) throw err;
+            viewDepartment();
+            startAPP()
+        });
+    });
+};
+
 // UPDATE PROMT FUNCITONS
 function update() {
     return inquirer.prompt([
@@ -165,6 +225,7 @@ function update() {
         }
     ]).then(function (answer) {
         updateEmployee();
+        startAPP()
     });
 };
 
