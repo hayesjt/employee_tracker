@@ -1,7 +1,8 @@
 // PACKAGES REQUIRED
-const inquirer = require("inquirer");
+var inquirer = require("inquirer");
 var mysql = require("mysql");
-
+var cTable = require("console.table");
+var express = require("express");
 
 // CONNECTING TO MYSQL
 var connection = mysql.createConnection({
@@ -43,7 +44,6 @@ function startAPP() {
             ]
         }
     ]).then(function (answer) {
-        // SWITCH THAT WILL ALLOW MANAGER TO CHOOSE ACTION ITEM NEEDED
         switch (answer.action) {
             case "View departments, roles, or employees":
                 view();
@@ -62,7 +62,7 @@ function startAPP() {
 };
 
 // VIEW PROMPT FUNCTIONS
-function view(){
+function view() {
     return inquirer.prompt([
         {
             type: "list",
@@ -76,7 +76,6 @@ function view(){
             ]
         }
     ]).then(function (answer) {
-        // SWITCH THAT WILL ALLOW MANAGER TO CHOOSE ACTION ITEM NEEDED
         switch (answer.action) {
             case "Departments":
                 viewDepartment();
@@ -94,8 +93,36 @@ function view(){
     });
 };
 
+// VIEW FUNCITONS
+function viewDepartment() {
+    connection.query("SELECT * FROM department_table", function (err, result) {
+        if (err) throw err;
+
+        console.table(result);
+        startAPP();
+    });
+}
+
+function viewRoles() {
+    connection.query("SELECT * FROM role_table", function (err, result) {
+        if (err) throw err;
+
+        console.table(result);
+        startAPP();
+    });
+}
+
+function viewEmployees() {
+    connection.query("SELECT * FROM employee_table", function (err, result) {
+        if (err) throw err;
+
+        console.table(result);
+        startAPP();
+    });
+}
+
 // ADD PROMT FUNCTIONS
-function add(){
+function add() {
     return inquirer.prompt([
         {
             type: "list",
@@ -109,7 +136,6 @@ function add(){
             ]
         }
     ]).then(function (answer) {
-        // SWITCH THAT WILL ALLOW MANAGER TO CHOOSE ACTION ITEM NEEDED
         switch (answer.action) {
             case "Department":
                 addDepartment();
@@ -127,7 +153,7 @@ function add(){
     });
 };
 // UPDATE PROMT FUNCITONS
-function update(){
+function update() {
     return inquirer.prompt([
         {
             type: "list",
@@ -137,12 +163,12 @@ function update(){
                 // Need to get employees from data
             ]
         }
-    ]).then(function(answer) {
-        updateEmployee();   
+    ]).then(function (answer) {
+        updateEmployee();
     });
 };
 
 // END APPLICATION FUNCTION
-function endAPP(){
+function endAPP() {
     console.log("Exit console -- actions are complete --")
 };

@@ -1,0 +1,21 @@
+{
+  "name": "employee_tracker",
+  "version": "1.0.0",
+  "description": "Viewing, adding, and updating an employee database through a node application",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/haylee430/employee_tracker.git"
+  },
+  "author": "Haylee Thomas-Kuhlmann",
+  "license": "ISC",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "express": "^4.17.1",
+    "inquirer": "^7.0.0",
+    "mysql": "^2.17.1"
+  }
+}
