@@ -3,6 +3,8 @@ var inquirer = require("inquirer");
 var mysql = require("mysql");
 var cTable = require("console.table");
 var express = require("express");
+const {selectRoles, selectEmloyee} = require("./lib/queries");
+
 
 // CONNECTING TO MYSQL
 var connection = mysql.createConnection({
@@ -23,6 +25,7 @@ connection.connect(function (err) {
     if (err) throw err;
     startAPP();
 });
+
 
 
 // FIRST PROMPT FUNCITON
@@ -104,13 +107,14 @@ function viewDepartment() {
 }
 
 function viewRoles() {
-    connection.query("SELECT * FROM role_table", function (err, result) {
+    connection.query(selectRoles() , 
+    function (err, result) {
         if (err) throw err;
 
         console.table(result);
         startAPP();
     });
-}
+    };
 
 function viewEmployees() {
     connection.query("SELECT * FROM employee_table", function (err, result) {
@@ -188,9 +192,9 @@ function addRoles() {
             message: "What is the Department ID number (refer to department view)?",
         },
     ]).then(function (answers) {
-        connection.query('"INSERT INTO role_table (title, salary, dep_ID) VALUES ("' + answers.name + '","' + answers.salary + '",' + answers.id + ');' , function (err, result) {
+        connection.query('INSERT INTO role_table (title, salary, dep_ID) VALUES ("' + answers.name + '",' + answers.salary + ',' + answers.id + ');' , function (err, result) {
             if (err) throw err;
-            viewDepartment();
+            viewRoles();
             startAPP()
         });
     });
@@ -201,7 +205,22 @@ function addEmployees() {
         {
             type: "input",
             name: "name",
-            message: "What is the name of the department?",
+            message: "What is the first name of the Employee?",
+        },
+        {
+            type: "input",
+            name: "name",
+            message: "What is the last name of the Employee?",
+        },
+        {
+            type: "input",
+            name: "name",
+            message: "What is the employees role ID?",
+        },
+        {
+            type: "input",
+            name: "name",
+            message: "Does this employee have a manager ID (if not, type null)?",
         },
     ]).then(function (answer) {
         connection.query("INSERT INTO department_table (department_name) VALUES ('" + answer.name + "');", function (err, result) {
