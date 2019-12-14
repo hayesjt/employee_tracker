@@ -22,11 +22,15 @@ INSERT INTO role_table (title, salary, dep_ID)
 VALUES ("Fixture Designer", 55000, 3);
 
 -- inserting 3 rows into employee table --
-INSERT INTO employee_table (first_name, last_name, role_ID, mng_ID)
-VALUES ("Micah", "Ebert", 1, NULL);
+INSERT INTO employee_table (first_name, last_name, role_ID)
+VALUES ("Micah", "Ebert", 1);
 
-INSERT INTO employee_table (first_name, last_name, role_ID, mng_ID)
-VALUES ("Haylee", "Thomas", 1, 1);
+INSERT INTO employee_table (first_name, last_name, role_ID)
+VALUES ("Haylee", "Thomas", 1);
 
-INSERT INTO employee_table (first_name, last_name, role_ID, mng_ID)
-VALUES ("Blake", "Johnson", 3, NULL);
+INSERT INTO employee_table (first_name, last_name, role_ID)
+VALUES ("Blake", "Johnson", 3);
+
+
+-- EXAMPLE --
+selectViewEmployees: (hello) => `SELECT ${hello}`

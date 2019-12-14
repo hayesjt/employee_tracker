@@ -3,7 +3,8 @@ var inquirer = require("inquirer");
 var mysql = require("mysql");
 var cTable = require("console.table");
 var express = require("express");
-const {selectRoles, selectEmloyee} = require("./lib/queries");
+const { selectViewDepartments, selectViewRoles, selectViewEmployees,
+    selectAddDepartment, selectAddRole, selectAddEmployee } = require("./lib/queries");
 
 
 // CONNECTING TO MYSQL
@@ -26,13 +27,12 @@ connection.connect(function (err) {
     startAPP();
 });
 
-
+// STARTING MESSAGE
+console.log("WELCOME TO THE EMPLOYEE TRACKER");
+console.log("--------------------------------");
 
 // FIRST PROMPT FUNCITON
 function startAPP() {
-    // STARTING MESSAGE
-    console.log("WELCOME TO THE EMPLOYEE TRACKER");
-    console.log("--------------------------------");
     // PROMPTING MANAGER ACTION ITEMS LIST
     return inquirer.prompt([
         {
@@ -58,6 +58,30 @@ function startAPP() {
                 update();
                 break;
             case "Nothing, I am done":
+                endAPP();
+                break;
+        }
+    });
+};
+
+//RESTART FUNCTION AFTER TASK COMPLETE
+function reStart() {
+    return inquirer.prompt([
+        {
+            type: "list",
+            name: "action",
+            message: "Would you like to do another action?",
+            choices: [
+                "Yes",
+                "No, I'm Done"
+            ]
+        }
+    ]).then(function (answer) {
+        switch (answer.action) {
+            case "Yes":
+                startAPP();
+                break;
+            case "No, I am done":
                 endAPP();
                 break;
         }
@@ -98,31 +122,33 @@ function view() {
 
 // VIEW FUNCITONS
 function viewDepartment() {
-    connection.query("SELECT * FROM department_table", function (err, result) {
-        if (err) throw err;
+    connection.query(selectViewDepartments(),
+        function (err, result) {
+            if (err) throw err;
 
-        console.table(result);
-        startAPP();
-    });
+            console.table(result);
+            reStart();
+        });
 }
 
 function viewRoles() {
-    connection.query(selectRoles() , 
-    function (err, result) {
-        if (err) throw err;
+    connection.query(selectViewRoles(),
+        function (err, result) {
+            if (err) throw err;
 
-        console.table(result);
-        startAPP();
-    });
-    };
+            console.table(result);
+            reStart();
+        });
+};
 
 function viewEmployees() {
-    connection.query("SELECT * FROM employee_table", function (err, result) {
-        if (err) throw err;
+    connection.query(selectViewEmployees(),
+        function (err, result) {
+            if (err) throw err;
 
-        console.table(result);
-        startAPP();
-    });
+            console.table(result);
+            reStart();
+        });
 }
 
 // ADD PROMT FUNCTIONS
@@ -166,10 +192,10 @@ function addDepartment() {
             message: "What is the name of the department?",
         },
     ]).then(function (answer) {
-        connection.query("INSERT INTO department_table (department_name) VALUES ('" + answer.name + "');", function (err, result) {
+        connection.query(selectAddDepartment(answer.name), function (err, result) {
             if (err) throw err;
             viewDepartment();
-            startAPP()
+            reStart()
         });
     });
 };
@@ -192,11 +218,12 @@ function addRoles() {
             message: "What is the Department ID number (refer to department view)?",
         },
     ]).then(function (answers) {
-        connection.query('INSERT INTO role_table (title, salary, dep_ID) VALUES ("' + answers.name + '",' + answers.salary + ',' + answers.id + ');' , function (err, result) {
-            if (err) throw err;
-            viewRoles();
-            startAPP()
-        });
+        connection.query(selectAddRole(answers.name, answers.salary, answers.id),
+            function (err, result) {
+                if (err) throw err;
+                viewRoles();
+                reStart()
+            });
     });
 };
 
@@ -204,30 +231,26 @@ function addEmployees() {
     return inquirer.prompt([
         {
             type: "input",
-            name: "name",
+            name: "first",
             message: "What is the first name of the Employee?",
         },
         {
             type: "input",
-            name: "name",
+            name: "last",
             message: "What is the last name of the Employee?",
         },
         {
             type: "input",
-            name: "name",
+            name: "id",
             message: "What is the employees role ID?",
-        },
-        {
-            type: "input",
-            name: "name",
-            message: "Does this employee have a manager ID (if not, type null)?",
-        },
-    ]).then(function (answer) {
-        connection.query("INSERT INTO department_table (department_name) VALUES ('" + answer.name + "');", function (err, result) {
-            if (err) throw err;
-            viewDepartment();
-            startAPP()
-        });
+        }
+    ]).then(function (answers) {
+        connection.query(selectAddEmployee(answers.first, answers.last, answers.id),
+            function (err, result) {
+                if (err) throw err;
+                viewEmployees();
+                reStart()
+            });
     });
 };
 
@@ -244,7 +267,7 @@ function update() {
         }
     ]).then(function (answer) {
         updateEmployee();
-        startAPP()
+        reStart()
     });
 };
 

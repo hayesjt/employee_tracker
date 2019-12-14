@@ -28,8 +28,6 @@ CREATE TABLE employee_table (
   first_name VARCHAR(50) NOT NULL,
   last_name VARCHAR(50) NOT NULL,
   role_ID INT NOT NULL,
-  mng_ID INT NULL,
   PRIMARY KEY (ID),
   FOREIGN KEY (role_ID) REFERENCES role_table (ID),
-  FOREIGN KEY (mng_ID) REFERENCES employee_table (ID)
 );
