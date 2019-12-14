@@ -30,7 +30,3 @@ VALUES ("Haylee", "Thomas", 1);
 
 INSERT INTO employee_table (first_name, last_name, role_ID)
 VALUES ("Blake", "Johnson", 3);
-
-
--- EXAMPLE --
-selectViewEmployees: (hello) => `SELECT ${hello}`

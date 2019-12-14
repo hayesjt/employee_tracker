@@ -1,11 +1,23 @@
 // PACKAGES REQUIRED
-var inquirer = require("inquirer");
-var mysql = require("mysql");
-var cTable = require("console.table");
-var express = require("express");
+const inquirer = require("inquirer");
+const mysql = require("mysql");
+const table = require("console.table");
 const { selectViewDepartments, selectViewRoles, selectViewEmployees,
-    selectAddDepartment, selectAddRole, selectAddEmployee } = require("./lib/queries");
+    selectAddDepartment, selectAddRole, selectAddEmployee, selectEmployee,
+    selectRoleID, updateEmployee } = require("./lib/queries");
+const CFonts = require("cfonts");
 
+// STARTING TITLE WORDS
+CFonts.say('Employee|Task|Manager', {
+    font: 'chrome',
+    align: 'left',
+    colors: ['#0ff', 'green', '#ff0'],
+    background: 'transparent',
+    letterSpacing: 1,
+    lineHeight: 1,
+    space: true,
+    maxLength: '0',
+});
 
 // CONNECTING TO MYSQL
 var connection = mysql.createConnection({
@@ -26,10 +38,6 @@ connection.connect(function (err) {
     if (err) throw err;
     startAPP();
 });
-
-// STARTING MESSAGE
-console.log("WELCOME TO THE EMPLOYEE TRACKER");
-console.log("--------------------------------");
 
 // FIRST PROMPT FUNCITON
 function startAPP() {
@@ -195,7 +203,6 @@ function addDepartment() {
         connection.query(selectAddDepartment(answer.name), function (err, result) {
             if (err) throw err;
             viewDepartment();
-            reStart()
         });
     });
 };
@@ -222,7 +229,6 @@ function addRoles() {
             function (err, result) {
                 if (err) throw err;
                 viewRoles();
-                reStart()
             });
     });
 };
@@ -249,25 +255,60 @@ function addEmployees() {
             function (err, result) {
                 if (err) throw err;
                 viewEmployees();
-                reStart()
             });
     });
 };
 
 // UPDATE PROMT FUNCITONS
 function update() {
-    return inquirer.prompt([
+
+    let employeeArray = [];
+    let roleIdArray = [];
+
+    connection.query(selectEmployee(),
+        function (err, result) {
+            if (err) throw err;
+
+            for (var i = 0; i < result.length; i++) {
+                let employees = result[i].first_name + "" + result[i].last_name;
+
+                employeeArray.push(employees);
+            }
+        });
+
+    connection.query(selectRoleID(),
+        function (err, result) {
+            if (err) throw err;
+
+            for (var i = 0; i < result.length; i++) {
+                let roles = result[i].title + " " + result[i].id;
+
+                roleIdArray.push(roles);
+            }
+        })
+
+    inquirer.prompt([
         {
             type: "list",
-            name: "action",
+            name: "employee",
             message: "What employee would you like to update",
-            choices: [
-                // Need to get employees from data
-            ]
+            choices: employeeArray
+        },
+        {
+            type: "list",
+            name: "role",
+            message: "What is the employee's new role?",
+            choices: roleIdArray
         }
-    ]).then(function (answer) {
-        updateEmployee();
-        reStart()
+    ]).then(function (answers) {
+
+        let firstName = answers.employee.split("");
+        let newRole = answers.role.split("_");
+
+        connection.query(updateEmployee(newRole, firstName), function (err, result) {
+            if (err) throw err;
+            viewEmployees();
+        })
     });
 };
 

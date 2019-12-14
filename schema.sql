@@ -29,5 +29,5 @@ CREATE TABLE employee_table (
   last_name VARCHAR(50) NOT NULL,
   role_ID INT NOT NULL,
   PRIMARY KEY (ID),
-  FOREIGN KEY (role_ID) REFERENCES role_table (ID),
-);
+  FOREIGN KEY (role_ID) REFERENCES role_table (ID)
+)
