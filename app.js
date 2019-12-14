@@ -270,7 +270,7 @@ function update() {
 
             for (var i = 0; i < result.length; i++) {
 
-                let employees = result[i].first_name + "" + result[i].last_name;
+                let employees = result[i].first_name + " " + result[i].last_name;
 
                 employeeArray.push(employees);
             }
