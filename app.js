@@ -262,55 +262,58 @@ function addEmployees() {
 // UPDATE PROMT FUNCITONS
 function update() {
 
-    let employeeArray = [];
-    let roleIdArray = [];
-
     connection.query(selectEmployee(),
         function (err, result) {
             if (err) throw err;
 
+            let employeeArray = [];
+
             for (var i = 0; i < result.length; i++) {
+
                 let employees = result[i].first_name + "" + result[i].last_name;
 
                 employeeArray.push(employees);
             }
+
+            connection.query(selectRoleID(),
+                function (err, result) {
+                    if (err) throw err;
+
+                    let roleIdArray = [];
+
+                    for (var i = 0; i < result.length; i++) {
+
+                        let roles = result[i].title + " " + result[i].ID;
+
+                        roleIdArray.push(roles);
+                    }
+
+                    inquirer.prompt([
+                        {
+                            type: "list",
+                            name: "employee",
+                            message: "What employee would you like to update",
+                            choices: employeeArray
+                        },
+                        {
+                            type: "list",
+                            name: "role",
+                            message: "What is the employee's new role?",
+                            choices: roleIdArray
+                        }
+                    ]).then(function (answers) {
+
+                        let newRole = answers.role.split(" ");
+                        let firstName = answers.employee.split(" ");
+
+                        connection.query(updateEmployee(newRole, firstName), function (err, result) {
+                            if (err) throw err;
+                            viewEmployees();
+                        })
+                    });
+                });
         });
-
-    connection.query(selectRoleID(),
-        function (err, result) {
-            if (err) throw err;
-
-            for (var i = 0; i < result.length; i++) {
-                let roles = result[i].title + " " + result[i].id;
-
-                roleIdArray.push(roles);
-            }
-        })
-
-    inquirer.prompt([
-        {
-            type: "list",
-            name: "employee",
-            message: "What employee would you like to update",
-            choices: employeeArray
-        },
-        {
-            type: "list",
-            name: "role",
-            message: "What is the employee's new role?",
-            choices: roleIdArray
-        }
-    ]).then(function (answers) {
-
-        let firstName = answers.employee.split("");
-        let newRole = answers.role.split("_");
-
-        connection.query(updateEmployee(newRole, firstName), function (err, result) {
-            if (err) throw err;
-            viewEmployees();
-        })
-    });
-};
+}
 
 // END APPLICATION FUNCTION
 function endAPP() {
